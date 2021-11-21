@@ -37,3 +37,6 @@ lerna-debug.log*
 # ENV
 .development.env
 .production.env
+
+# Auth0 auth0-config
+.config

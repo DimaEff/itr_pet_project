@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
-import { AuthorizationGuard } from '../authorization/authorization.guard';
 
 
 @Controller('cats')
@@ -10,7 +10,7 @@ export class CatsController {
     constructor(private catsService: CatsService) {
     }
 
-    @UseGuards(AuthorizationGuard)
+    @UseGuards(AuthGuard('jwt'))
     @Post()
     create(@Body() dto: CreateCatDto) {
         return this.catsService.create(dto);
