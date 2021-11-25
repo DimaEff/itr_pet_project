@@ -4,10 +4,10 @@ import { IsNumber, IsString, Length } from 'class-validator';
 export class CreateCatDto {
     @IsString()
     @Length(1, 12)
-    readonly name;
+    readonly : string;
     @IsNumber()
-    readonly age;
+    readonly age: number;
     @IsString()
     @Length(1, 12)
-    readonly breed;
+    readonly breed: string;
 }

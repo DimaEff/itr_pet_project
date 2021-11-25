@@ -6,6 +6,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CatsModule } from './cats/cats.module';
 import { AuthorizationModule } from './authorization/authorization.module';
+import { UsersModule } from './users/users.module';
+import {RolesModule} from './roles/roles.module';
+import { HelperModule } from './helper/helper.module';
+import { ErrorMessagesModule } from './error-messages/error-messages.module';
 
 
 @Module({
@@ -17,6 +21,10 @@ import { AuthorizationModule } from './authorization/authorization.module';
         MongooseModule.forRoot(process.env.MONGODB_URI),
         CatsModule,
         AuthorizationModule,
+        UsersModule,
+        RolesModule,
+        HelperModule,
+        ErrorMessagesModule,
     ],
     controllers: [AppController],
     providers: [AppService],
