@@ -15,7 +15,7 @@ const scopes = {
 };
 
 const rolesPermissions = {
-    admin: new Role([scopes.events, scopes.users], [scopes.events, scopes.users]),
+    admin: new Role([scopes.events, scopes.users], [scopes.events, scopes.users]).permissions,
 };
 
 export default rolesPermissions;

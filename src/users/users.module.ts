@@ -1,19 +1,21 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigModule } from '@nestjs/config';
 
-import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { User, UserSchema } from './schemas/user.schema';
-import { ErrorMessagesModule } from '../error-messages/error-messages.module';
+import { UsersService } from './users.service';
 
 
 @Module({
     imports: [
-        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-        ErrorMessagesModule,
+        HttpModule.register({
+            timeout: 5000,
+            maxRedirects: 5,
+        }),
+        ConfigModule,
     ],
-    providers: [UsersService],
     controllers: [UsersController],
+    providers: [UsersService],
 })
 export class UsersModule {
 }

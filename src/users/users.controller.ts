@@ -1,27 +1,21 @@
-import { Body, Controller, Get, Post, SetMetadata, UseGuards } from '@nestjs/common';
+import { Body, Controller, UseGuards, Req, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import {Request} from 'express';
 
 import {UsersService} from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { PermissionGuard, rolesPermissions } from '../authorization/permissions';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 
-// Я буду менять UserController. Пока еще не придумал как)
-// Пока что он тут просто в виде примера.
 @Controller('users')
 export class UsersController {
     constructor(private usersService: UsersService) {
     }
 
-    @UseGuards(AuthGuard('jwt'), PermissionGuard)
-    @SetMetadata('permission', rolesPermissions.admin)
-    @Get()
-    auth(@Body() dto: CreateUserDto) {
-        return this.usersService.auth(dto);
-    }
-
-    @Get()
-    getAll() {
-        return this.usersService.findAll();
+    @UseGuards(AuthGuard('jwt'))
+    @Post()
+    update(@Body() dto: UpdateUserDto, @Req() req: Request) {
+        // console.log(req);
+        return this.usersService.setUserData(dto, req);
+        // return {message: 'ok'};
     }
 }
