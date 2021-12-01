@@ -1,21 +1,25 @@
-import { Body, Controller, UseGuards, Req, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import {Request} from 'express';
+import { Request } from 'express';
 
 import {UsersService} from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 
 @Controller('users')
+@UseGuards(AuthGuard('jwt'))
 export class UsersController {
     constructor(private usersService: UsersService) {
     }
 
-    @UseGuards(AuthGuard('jwt'))
-    @Post()
-    update(@Body() dto: UpdateUserDto, @Req() req: Request) {
-        // console.log(req);
+    @Put('/update')
+    setUserDate(@Body() dto: UpdateUserDto, @Req() req) {
+        console.log('controller');
         return this.usersService.setUserData(dto, req);
-        // return {message: 'ok'};
+    }
+
+    @Delete('/')
+    delete(@Req() req: Request) {
+        return this.usersService.delete(req);
     }
 }

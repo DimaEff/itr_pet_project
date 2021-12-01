@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
-import { PermissionGuard, rolesPermissions } from '../authorization/permissions';
+import { PermissionGuard, rolesPermissions } from '../authorization/guards/permissions';
 
 
 @Controller('cats')

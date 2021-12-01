@@ -1,8 +1,7 @@
-import { IsOptional, IsObject } from 'class-validator';
+import { IsObject } from 'class-validator';
 
 
 export class UpdateUserDto {
-    @IsOptional()
     @IsObject()
-    readonly data?: any;
+    readonly data: any;
 }

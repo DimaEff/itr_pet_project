@@ -1,75 +1,78 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
-import { BehaviorSubject, Observable, take } from 'rxjs';
-import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 
 import { UpdateUserDto } from './dto/update-user.dto';
+import { BlockUserDto } from './dto/block-user.dto';
+import { ManagementService } from '../management/management.service';
 
 
 @Injectable()
 export class UsersService {
-    private readonly domain: string;
-    private readonly clientId: string;
-    private readonly clientSecret: string;
-    private readonly audience: string;
-
     constructor(private httpService: HttpService,
-                private configService: ConfigService) {
-        this.domain = configService.get('AUTH0_DOMAIN');
-        this.clientId = configService.get('AUTH0_CLIENT_ID');
-        this.clientSecret = configService.get('AUTH0_CLIENT_SECRET');
-        this.audience = configService.get('AUTH0_MANAGEMENT_API_AUDIENCE');
+                private managementService: ManagementService) {
     }
 
-    async setUserData(dto: UpdateUserDto, req: Request): Promise<any> {
-        const uid = req.user['sub'];
-        const token = await this.fetchManagementAPIToken();
-        console.log(uid, token);
-        const newData = this.fetchSetUserData(uid, token, dto.data)
-            .then(v => console.log(v))
-            .catch(e => console.log(e));
+    async getAll(): Promise<AxiosResponse<any>> {
+        const users = await this.fetchAllUsers();
 
-        return newData;
+        return users.data;
     }
 
-    private fetchSetUserData(uid: string, token: string, data: object): Promise<AxiosResponse<any>> {
-        const url = this.domain + `api/v2/users/${uid}`;
-        console.log(url);
+    async setIsBlockedUser(dto: BlockUserDto): Promise<AxiosResponse<any>> {
+        const dataObject = { blocked: dto.isBlocked };
+        const res = await this.fetchSetUserData(dto.uid, dataObject);
+
+        return res.data;
+    }
+
+    async setUserData(dto: UpdateUserDto, req: Request, uid?: string): Promise<any> {
+        const id = uid || this.getUserIdByReq(req);
+
+        return this.fetchSetUserData(id, dto.data);
+    }
+
+    async delete(req: Request, uid?: string): Promise<any> {
+        const id = uid || this.getUserIdByReq(req);
+
+        return this.fetchDelete(id);
+    }
+
+    private async fetchAllUsers(): Promise<AxiosResponse<any>> {
+        const conf = await this.managementService.getBaseRequestConfig();
+
+        return this.httpService.get(
+            this.getBaseApiUrl(),
+            conf,
+        ).toPromise();
+    }
+
+    private async fetchSetUserData(uid: string, data: object): Promise<AxiosResponse<any>> {
+        const conf = await this.managementService.getBaseRequestConfig();
 
         return this.httpService.patch(
-            url,
-            { app_metadata: {test: 'test'} },
-            {
-                headers: {
-                    authorization: `Bearer ${token}`,
-                    'content-type': 'application/json',
-                },
-            },
+            this.getBaseApiUrl(uid),
+            data,
+            conf,
         ).toPromise();
     }
 
-    private async fetchManagementAPIToken(): Promise<string> {
-        console.log('ci', this.clientId);
-        console.log('cs', this.clientSecret);
-        console.log('au', this.audience);
+    private async fetchDelete(uid: string): Promise<AxiosResponse<any>> {
+        const conf = await this.managementService.getBaseRequestConfig();
 
-        const res = await this.httpService.post(
-            this.domain + 'oauth/token',
-            {
-                client_id: this.clientId,
-                client_secret: this.clientSecret,
-                audience: this.audience,
-                grant_type: 'client_credentials',
-            },
-            {
-                headers: {
-                    'content-type': 'application/json',
-                },
-            },
+        return this.httpService.delete(
+            this.getBaseApiUrl(uid),
+            conf,
         ).toPromise();
+    }
 
-        return res.data['access_token'];
+    private getUserIdByReq(req: Request): string {
+        return req.user['sub'];
+    }
+
+    private getBaseApiUrl(uid = ''): string {
+        const scope = this.managementService.scopes.Users;
+        return this.managementService.getBaseApiUrl(scope) + (uid ? `/${uid}` : '');
     }
 }

@@ -9,6 +9,9 @@ import { AuthorizationModule } from './authorization/authorization.module';
 import { HelperModule } from './helper/helper.module';
 import { ErrorMessagesModule } from './error-messages/error-messages.module';
 import { UsersModule } from './users/users.module';
+import { AdminModule } from './admin/admin.module';
+import { RolesModule } from './roles/roles.module';
+import { ManagementModule } from './management/management.module';
 
 
 @Module({
@@ -23,6 +26,9 @@ import { UsersModule } from './users/users.module';
         HelperModule,
         ErrorMessagesModule,
         UsersModule,
+        AdminModule,
+        RolesModule,
+        ManagementModule,
     ],
     controllers: [AppController],
     providers: [AppService],

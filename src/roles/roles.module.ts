@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
+import { RolesService } from './roles.service';
 import { ManagementModule } from '../management/management.module';
 
 
@@ -14,9 +13,8 @@ import { ManagementModule } from '../management/management.module';
         }),
         ManagementModule,
     ],
-    controllers: [UsersController],
-    providers: [UsersService],
-    exports: [UsersService],
+    providers: [RolesService],
+    exports: [RolesService],
 })
-export class UsersModule {
+export class RolesModule {
 }
