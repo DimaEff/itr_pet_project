@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
-import { PermissionGuard, rolesPermissions } from '../authorization/guards/permissions';
+import { PermissionGuard, roles } from '../authorization/guards/permissions';
 
 
 @Controller('cats')
@@ -12,7 +12,7 @@ export class CatsController {
     }
 
     @UseGuards(AuthGuard('jwt'), PermissionGuard)
-    @SetMetadata('permission', rolesPermissions.admin)
+    @SetMetadata('roles', roles.admin)
     @Post()
     create(@Body() dto: CreateCatDto) {
         return this.catsService.create(dto);

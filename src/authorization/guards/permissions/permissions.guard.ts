@@ -10,8 +10,9 @@ class PermissionsGuard implements CanActivate {
         context: ExecutionContext,
     ): boolean {
         const [req] = context.getArgs();
-        const userPermissions: [any] = req?.user?.permissions || [];
-        const requiredPermissions = this.reflector.get('permission', context.getHandler()) || [];
+        const userPermissions: string[] = req?.user?.permissions || [];
+        const requiredPermissions = this.reflector.get('roles', context.getHandler()) || [];
+        console.log(userPermissions, requiredPermissions);
         const hasAllRequirePermissions = requiredPermissions.every(p => userPermissions.includes(p));
 
         if (requiredPermissions.length === 0 || hasAllRequirePermissions) {
