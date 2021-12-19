@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios';
 import { Request } from 'express';
 
 import { UpdateUserDto } from './dto/update-user.dto';
-import { BlockUserDto } from './dto/block-user.dto';
+import { AdminBlockUserDto } from '../admin/dto/admin-block-user.dto';
 import { ManagementService } from '../management/management.service';
 
 
@@ -20,7 +20,7 @@ export class UsersService {
         return users.data;
     }
 
-    async setIsBlockedUser(dto: BlockUserDto): Promise<AxiosResponse<any>> {
+    async setIsBlockedUser(dto: AdminBlockUserDto): Promise<AxiosResponse<any>> {
         const dataObject = { blocked: dto.isBlocked };
         const res = await this.fetchSetUserData(dto.uid, dataObject);
 

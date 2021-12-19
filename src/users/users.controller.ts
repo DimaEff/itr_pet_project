@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
@@ -14,7 +14,6 @@ export class UsersController {
 
     @Put('/update')
     setUserDate(@Body() dto: UpdateUserDto, @Req() req) {
-        console.log('controller');
         return this.usersService.setUserData(dto, req);
     }
 
