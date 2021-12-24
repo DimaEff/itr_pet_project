@@ -1,7 +1,7 @@
 import { IsBoolean, IsString } from 'class-validator';
 
 
-export class BlockUserDto {
+export class AdminBlockUserDto {
     @IsString()
     readonly uid: string;
 
