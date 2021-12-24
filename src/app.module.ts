@@ -12,6 +12,9 @@ import { UsersModule } from './users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { RolesModule } from './roles/roles.module';
 import { ManagementModule } from './management/management.module';
+import { EventsModule } from './events/events.module';
+import { EventTypesModule } from './event-types/event-types.module';
+import { GoogleFilesModule } from './google-files/google-files.module';
 
 
 @Module({
@@ -29,6 +32,9 @@ import { ManagementModule } from './management/management.module';
         AdminModule,
         RolesModule,
         ManagementModule,
+        EventsModule,
+        EventTypesModule,
+        GoogleFilesModule,
     ],
     controllers: [AppController],
     providers: [AppService],
