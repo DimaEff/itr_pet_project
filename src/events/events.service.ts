@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import {CreateEventDto} from "./dto/create-event.dto";
-import {GoogleFilesService} from "../google-files/google-files.service";
+import {StorageService} from "../storage/storage.service";
 
 
 @Injectable()
 export class EventsService {
-    constructor(private readonly googleService: GoogleFilesService) {
+    constructor(private readonly googleService: StorageService) {
     }
 }

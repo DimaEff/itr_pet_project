@@ -13,7 +13,7 @@ import { AdminModule } from './admin/admin.module';
 import { RolesModule } from './roles/roles.module';
 import { ManagementModule } from './management/management.module';
 import { EventTypesModule } from './event-types/event-types.module';
-import { GoogleFilesModule } from './google-files/google-files.module';
+import { StorageModule } from './storage/storage.module';
 import { EventsModule } from './events/events.module';
 
 
@@ -33,7 +33,7 @@ import { EventsModule } from './events/events.module';
         RolesModule,
         ManagementModule,
         EventTypesModule,
-        GoogleFilesModule,
+        StorageModule,
         EventsModule,
     ],
     controllers: [AppController],

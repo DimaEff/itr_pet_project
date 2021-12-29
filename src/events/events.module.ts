@@ -4,13 +4,13 @@ import {MongooseModule} from "@nestjs/mongoose";
 import { EventsService } from './events.service';
 import { EventsController } from './events.controller';
 import {Event, EventSchema} from './schemas/event.schema';
-import {GoogleFilesModule} from "../google-files/google-files.module";
+import {StorageModule} from "../storage/storage.module";
 
 
 @Module({
   imports: [
       MongooseModule.forFeature([{name: Event.name, schema: EventSchema}]),
-      GoogleFilesModule,
+      StorageModule,
   ],
   providers: [EventsService],
   controllers: [EventsController],
