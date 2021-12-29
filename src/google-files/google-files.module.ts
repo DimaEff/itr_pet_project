@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
+
 import { GoogleFilesService } from './google-files.service';
 
+
 @Module({
-  providers: [GoogleFilesService]
+  providers: [GoogleFilesService],
+  exports: [GoogleFilesService],
 })
 export class GoogleFilesModule {}

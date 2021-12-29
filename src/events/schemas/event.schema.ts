@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import * as mongoose from "mongoose";
+import * as mongoose from 'mongoose';
 
 import {EventType} from '../../event-types/schemas/event-type.schema';
 
@@ -15,7 +15,10 @@ export class Event {
     @Prop()
     description: string;
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'EventType' })
+    @Prop()
+    images: string[];
+
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'EventType' })
     type: EventType;
 }
 
