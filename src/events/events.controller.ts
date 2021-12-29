@@ -16,7 +16,7 @@ export class EventsController {
     @Post()
     @UseInterceptors(FilesInterceptor('files', null, {storage: googleStorage}))
     create(@Body() dto: CreateEventDto, @UploadedFiles() files: any[]) {
-        console.log(dto, files);
+        return this.eventsService.create(dto, files);
     }
 
     // b00f7499-10e9-4599-ba8c-98ffc1c1b8e3.jpg

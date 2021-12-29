@@ -20,7 +20,6 @@ export class StorageService {
     }
 
     async delete(fileNames: string[]): Promise<void> {
-        console.log(__dirname);
         await Promise.all(fileNames.map(f => this.bucket
             .file(f)
             .delete()

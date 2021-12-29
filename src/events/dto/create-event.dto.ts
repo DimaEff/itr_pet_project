@@ -1,5 +1,14 @@
-import {IsString, Length} from 'class-validator';
+import {IsNumber, IsString, Length, IsNotEmpty} from 'class-validator';
+import {Type} from 'class-transformer';
 
+
+class CoordinateDto {
+    @IsNumber()
+    lat: number;
+
+    @IsNumber()
+    lng: number;
+}
 
 export class CreateEventDto {
     @IsString()
@@ -12,4 +21,8 @@ export class CreateEventDto {
 
     @IsString()
     readonly type: string;
+
+    @IsNotEmpty()
+    @Type(() => CoordinateDto)
+    coordinate: CoordinateDto;
 }

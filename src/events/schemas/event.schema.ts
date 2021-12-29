@@ -1,9 +1,21 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
+import {Document} from 'mongoose';
 import * as mongoose from 'mongoose';
 
 import {EventType} from '../../event-types/schemas/event-type.schema';
+import {Image, ImageSchema} from "../../storage/schemas/image.schema";
 
+
+@Schema({_id: false})
+class Coordinate extends Document {
+    @Prop()
+    lat: number;
+
+    @Prop()
+    lng: number;
+}
+
+const CoordinateSchema = SchemaFactory.createForClass(Coordinate);
 
 export type EventDocument = Event & Document;
 
@@ -15,11 +27,14 @@ export class Event {
     @Prop()
     description: string;
 
-    @Prop()
-    images: string[];
+    @Prop({type: [ImageSchema]})
+    images: Image[];
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'EventType' })
+    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'EventType'})
     type: EventType;
+
+    @Prop({type: CoordinateSchema})
+    coordinate: Coordinate;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
