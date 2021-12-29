@@ -1,15 +1,18 @@
-import {Module} from '@nestjs/common';
-import {MongooseModule} from '@nestjs/mongoose';
+import { Module } from '@nestjs/common';
+import {MongooseModule} from "@nestjs/mongoose";
 
-import {EventsController} from './events.controller';
-import {EventsService} from './events.service';
+import { EventsService } from './events.service';
+import { EventsController } from './events.controller';
 import {Event, EventSchema} from './schemas/event.schema';
+import {GoogleFilesModule} from "../google-files/google-files.module";
 
 
 @Module({
-    imports: [MongooseModule.forFeature([{name: Event.name, schema: EventSchema}])],
-    controllers: [EventsController],
-    providers: [EventsService]
+  imports: [
+      MongooseModule.forFeature([{name: Event.name, schema: EventSchema}]),
+      GoogleFilesModule,
+  ],
+  providers: [EventsService],
+  controllers: [EventsController],
 })
-export class EventsModule {
-}
+export class EventsModule {}
