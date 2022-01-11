@@ -1,16 +1,20 @@
 import {Storage, Bucket} from '@google-cloud/storage';
 import {Injectable} from "@nestjs/common";
 import {resolve} from 'path';
+import {ConfigService} from "@nestjs/config";
 
 
 @Injectable()
 export class StorageService {
-    private readonly bucketName = 'int-map-storage';
-    private readonly settingsFileName = 'int-map-334413-57e13c359441.json';
+    private readonly bucketName;
+    private readonly settingsFileName;
 
     private bucket: Bucket;
 
-    constructor() {
+    constructor(private configService: ConfigService) {
+        this.bucketName = configService.get('STORAGE_BUCKET_NAME');
+        this.settingsFileName = configService.get('STORAGE_SETTINGS_FILE_NAME');
+
         const settingsFilePath = resolve(__dirname, this.settingsFileName);
         const storage = new Storage({
             keyFilename: settingsFilePath,

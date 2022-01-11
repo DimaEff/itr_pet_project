@@ -6,9 +6,6 @@ import {Document} from "mongoose";
 export class Image extends Document {
     @Prop()
     filename: string;
-
-    @Prop()
-    path: string;
 }
 
 export const ImageSchema = SchemaFactory.createForClass(Image);

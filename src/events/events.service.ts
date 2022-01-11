@@ -12,18 +12,34 @@ import {ErrorMessagesService} from "../error-messages/error-messages.service";
 @Injectable()
 export class EventsService {
     constructor(@InjectModel(Event.name) private eventModel: Model<EventDocument>,
-                private googleService: StorageService,
+                private storageService: StorageService,
                 private eventTypesService: EventTypesService,
                 private errorsService: ErrorMessagesService) {
+    }
+
+    async all(): Promise<Event[]> {
+        return this.eventModel.find();
     }
 
     async create(dto: CreateEventDto, files: any[]): Promise<Event> {
         const images = files.map(f => ({filename: f.filename, path: f.path}));
         const type = await this.eventTypesService.getTypeByValue(dto.type);
+
         if (!type) {
             this.errorsService.notFound('event type');
         }
-        console.log({...dto, images, type});
+
         return this.eventModel.create({...dto, images, type});
+    }
+
+    async delete(id: string): Promise<void> {
+        const event = await this.eventModel.findById(id);
+
+        if (!event) {
+            this.errorsService.notFound('event');
+        }
+
+        const images = event.images.map(i => i.filename);
+        await Promise.all([this.storageService.delete(images), event.delete()]);
     }
 }
