@@ -14,6 +14,7 @@ import {CreateCatDto} from "./dto/create-cat.dto";
 
 @WebSocketGateway(
     {
+        namespace: 'cats',
         cors: {
             origin: '*',
         },

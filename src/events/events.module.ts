@@ -1,4 +1,4 @@
-import {Module} from '@nestjs/common';
+import   {Module} from '@nestjs/common';
 import {MongooseModule} from "@nestjs/mongoose";
 
 import {EventsService} from './events.service';
@@ -7,6 +7,7 @@ import {Event, EventSchema} from './schemas/event.schema';
 import {StorageModule} from "../storage/storage.module";
 import {EventTypesModule} from "../event-types/event-types.module";
 import {ErrorMessagesModule} from "../error-messages/error-messages.module";
+import {EventsGateway} from "./events.gateway";
 
 
 @Module({
@@ -16,7 +17,7 @@ import {ErrorMessagesModule} from "../error-messages/error-messages.module";
         EventTypesModule,
         ErrorMessagesModule,
     ],
-    providers: [EventsService],
+    providers: [EventsService, EventsGateway],
     controllers: [EventsController],
 })
 export class EventsModule {

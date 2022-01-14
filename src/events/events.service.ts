@@ -7,6 +7,7 @@ import {CreateEventDto} from "./dto/create-event.dto";
 import {StorageService} from "../storage/storage.service";
 import {EventTypesService} from "../event-types/event-types.service";
 import {ErrorMessagesService} from "../error-messages/error-messages.service";
+import {Image} from "../storage/types";
 
 
 @Injectable()
@@ -22,7 +23,7 @@ export class EventsService {
     }
 
     async create(dto: CreateEventDto, files: any[]): Promise<Event> {
-        const images = files.map(f => ({filename: f.filename, path: f.path}));
+        const images: Image[] = files.map(f => ({filename: f.filename, path: f.path}));
         const type = await this.eventTypesService.getTypeByValue(dto.type);
 
         if (!type) {

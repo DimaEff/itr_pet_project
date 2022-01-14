@@ -6,16 +6,16 @@ import {EventType} from '../../event-types/schemas/event-type.schema';
 import {Image, ImageSchema} from "../../storage/schemas/image.schema";
 
 
-@Schema({_id: false})
-class Coordinate extends Document {
-    @Prop()
-    lat: number;
-
-    @Prop()
-    lng: number;
-}
-
-const CoordinateSchema = SchemaFactory.createForClass(Coordinate);
+// @Schema({_id: false})
+// class Coordinate extends Document {
+//     @Prop()
+//     lat: number;
+//
+//     @Prop()
+//     lng: number;
+// }
+//
+// const CoordinateSchema = SchemaFactory.createForClass(Coordinate);
 
 export type EventDocument = Event & Document;
 
@@ -30,11 +30,17 @@ export class Event {
     @Prop({type: [ImageSchema]})
     images: Image[];
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'EventType'})
+    @Prop({ref: 'EventType', subtype: mongoose.Schema.Types.Subdocument})
     type: EventType;
 
-    @Prop({type: CoordinateSchema})
-    coordinate: Coordinate;
+    @Prop()
+    lat: number;
+
+    @Prop()
+    lng: number;
+
+    // @Prop({type: CoordinateSchema})
+    // coordinate: Coordinate;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
