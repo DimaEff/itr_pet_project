@@ -6,15 +6,12 @@ import {
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
-import {Logger, UploadedFiles, UseGuards, UseInterceptors} from '@nestjs/common';
+import {Logger, UseGuards} from '@nestjs/common';
 import {Server, Socket} from 'socket.io';
-import {FilesInterceptor} from "@nestjs/platform-express";
+import {AuthGuard} from "@nestjs/passport";
 
 import {EventsService} from './events.service';
 import {CreateEventDto} from './dto/create-event.dto';
-import {googleStorage} from "../storage/storage-config";
-import {StorageService} from "../storage/storage.service";
-import {AuthGuard} from "@nestjs/passport";
 
 
 @WebSocketGateway(
@@ -26,8 +23,7 @@ import {AuthGuard} from "@nestjs/passport";
     }
 )
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-    constructor(private eventsService: EventsService,
-                private storageService: StorageService) {
+    constructor(private eventsService: EventsService) {
     }
 
     @WebSocketServer()
@@ -50,13 +46,21 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     @SubscribeMessage('events.create')
     @UseGuards(AuthGuard('jwt-ws'))
-    // @UseInterceptors(FilesInterceptor('files', null, {storage: googleStorage}))
-    async handleCreate(client: Socket, dto: any): Promise<void> {
-        // this.logger.log(dto);
-        const images = await this.storageService.save(dto.files);
-        console.log(images)
-        // await this.eventsService.create(dto, files);
-        // const cats = await this.eventsService.all();
-        this.server.emit('events.created', []);
+    async handleCreate(client: Socket, dto: CreateEventDto) {
+        await this.eventsService.create(dto);
+        await this.notifyAboutEventsChanges();
+    }
+
+    @SubscribeMessage('events.delete')
+    @UseGuards(AuthGuard('jwt-ws'))
+    async handleDelete(client: Socket, id: string) {
+        // console.log(id);
+        await this.eventsService.delete(id);
+        await this.notifyAboutEventsChanges();
+    }
+
+    private async notifyAboutEventsChanges() {
+        const events = await this.eventsService.all();
+        this.server.emit('events.changed', events);
     }
 }

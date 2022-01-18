@@ -1,4 +1,5 @@
 import {IsNumber, IsString, Length} from 'class-validator';
+import * as Buffer from "buffer";
 
 
 export class CreateEventDto {
@@ -19,5 +20,5 @@ export class CreateEventDto {
     @IsNumber({}, {message: 'test'})
     lng: number;
 
-    files: any;
+    files: Buffer[];
 }

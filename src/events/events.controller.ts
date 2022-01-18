@@ -30,8 +30,8 @@ export class EventsController {
     @Post()
     @UseInterceptors(FilesInterceptor('files',null, {storage: googleStorage}))
     create(@Body() dto: any, @UploadedFiles() files: any) {
-        console.log(dto, files);
-        return this.eventsService.create(dto, files);
+        console.log('create event', dto, files);
+        // return this.eventsService.create(dto, files);
     }
 
     @Delete(':id')

@@ -4,6 +4,8 @@ import {resolve} from 'path';
 import {ConfigService} from "@nestjs/config";
 import * as uuid from 'uuid';
 import * as Buffer from "buffer";
+import {fromBuffer} from 'file-type'
+
 import {Image} from "./types";
 
 
@@ -29,8 +31,9 @@ export class StorageService {
     async save(files: Buffer[]): Promise<Image[]> {
         const images: Image[] = [];
 
-        files.forEach(f => {
-            const filename = uuid.v4() + '.png';
+        for (const f of files) {
+            const {ext} = await fromBuffer(f);
+            const filename = `${uuid.v4()}.${ext}`;
             const metadata = this.getFileMetadata(filename);
 
             const file = this.bucket.file(filename);
@@ -40,9 +43,8 @@ export class StorageService {
             })
             stream.end(f);
 
-            console.log(metadata);
             images.push(metadata);
-        })
+        }
 
         return images;
     }
@@ -57,7 +59,7 @@ export class StorageService {
     private getFileMetadata(filename: string): Image {
         return {
             path: `https://${this.bucketName}.storage.googleapis.com/${filename}`,
-            filename: filename
+            filename: filename,
         }
     }
 }

@@ -22,13 +22,15 @@ export class EventsService {
         return this.eventModel.find();
     }
 
-    async create(dto: CreateEventDto, files: any[]): Promise<Event> {
-        const images: Image[] = files.map(f => ({filename: f.filename, path: f.path}));
+    async create(dto: CreateEventDto): Promise<Event> {
         const type = await this.eventTypesService.getTypeByValue(dto.type);
 
         if (!type) {
             this.errorsService.notFound('event type');
         }
+
+        const images: Image[] = await this.storageService.save(dto.files);
+        delete dto.files;
 
         return this.eventModel.create({...dto, images, type});
     }
