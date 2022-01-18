@@ -12,7 +12,7 @@ export class CatsController {
     }
 
     @UseGuards(AuthGuard('jwt'), PermissionGuard)
-    @SetMetadata('roles', roles.admin)
+    @SetMetadata('roles', [roles.admin])
     @Post()
     create(@Body() dto: CreateCatDto) {
         return this.catsService.create(dto);

@@ -4,6 +4,8 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 
 import { JwtStrategy } from './strategies/jwt.strategy';
+import {JwtWSStrategy} from "./strategies/jwt-ws.strategy";
+import { AuthorizationService } from './authorization.service';
 
 
 @Module({
@@ -15,7 +17,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         }),
         ConfigModule,
     ],
-    providers: [JwtStrategy],
-    exports: [PassportModule],
+    providers: [JwtStrategy, JwtWSStrategy, AuthorizationService],
+    exports: [PassportModule, AuthorizationService],
 })
 export class AuthorizationModule {}

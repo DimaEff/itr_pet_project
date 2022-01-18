@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import {ConfigService} from "@nestjs/config";
+import {passportJwtSecret} from "jwks-rsa";
 
 
 @Injectable()

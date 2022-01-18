@@ -6,13 +6,16 @@ import {
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
-import {Logger, UploadedFiles, UseInterceptors} from '@nestjs/common';
+import {Logger, SetMetadata, UploadedFiles, UseGuards, UseInterceptors} from '@nestjs/common';
 import {Server, Socket} from 'socket.io';
 import {FilesInterceptor} from "@nestjs/platform-express";
 
 import {EventsService} from './events.service';
 import {CreateEventDto} from './dto/create-event.dto';
 import {googleStorage} from "../storage/storage-config";
+import {StorageService} from "../storage/storage.service";
+import {AuthGuard} from "@nestjs/passport";
+import {PermissionGuard, roles} from "../authorization/guards/permissions";
 
 
 @WebSocketGateway(
@@ -24,7 +27,8 @@ import {googleStorage} from "../storage/storage-config";
     }
 )
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-    constructor(private eventsService: EventsService) {
+    constructor(private eventsService: EventsService,
+                private storageService: StorageService) {
     }
 
     @WebSocketServer()
@@ -38,19 +42,21 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     async handleConnection(client: Socket, ...args: any[]) {
         const cats = await this.eventsService.all();
-        client.emit('catsConnect', cats);
+        client.emit('events.connected', cats);
     }
 
     handleDisconnect(client: Socket) {
         this.logger.log(`Client disconnected: ${client.id}`);
     }
 
-    @SubscribeMessage('createEvent')
-    @UseInterceptors(FilesInterceptor('files', null, {storage: googleStorage}))
-    async handleMessage(client: Socket, dto: CreateEventDto, @UploadedFiles() files: any[]): Promise<void> {
-        this.logger.log('Message: ' + dto);
+    @SubscribeMessage('events.create')
+    @UseGuards(AuthGuard('jwt-ws'), PermissionGuard)
+    @SetMetadata('roles', [roles.admin])
+    // @UseInterceptors(FilesInterceptor('files', null, {storage: googleStorage}))
+    async handleCreate(client: Socket, dto: any): Promise<void> {
+        this.logger.log(dto);
         // await this.eventsService.create(dto, files);
         // const cats = await this.eventsService.all();
-        // this.server.emit('eventCreated', cats);
+        this.server.emit('events.created', []);
     }
 }
