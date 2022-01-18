@@ -6,7 +6,7 @@ import {
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
-import {Logger, SetMetadata, UploadedFiles, UseGuards, UseInterceptors} from '@nestjs/common';
+import {Logger, UploadedFiles, UseGuards, UseInterceptors} from '@nestjs/common';
 import {Server, Socket} from 'socket.io';
 import {FilesInterceptor} from "@nestjs/platform-express";
 
@@ -15,7 +15,6 @@ import {CreateEventDto} from './dto/create-event.dto';
 import {googleStorage} from "../storage/storage-config";
 import {StorageService} from "../storage/storage.service";
 import {AuthGuard} from "@nestjs/passport";
-import {PermissionGuard, roles} from "../authorization/guards/permissions";
 
 
 @WebSocketGateway(
@@ -50,11 +49,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
 
     @SubscribeMessage('events.create')
-    @UseGuards(AuthGuard('jwt-ws'), PermissionGuard)
-    @SetMetadata('roles', [roles.admin])
+    @UseGuards(AuthGuard('jwt-ws'))
     // @UseInterceptors(FilesInterceptor('files', null, {storage: googleStorage}))
     async handleCreate(client: Socket, dto: any): Promise<void> {
-        this.logger.log(dto);
+        // this.logger.log(dto);
+        const images = await this.storageService.save(dto.files);
+        console.log(images)
         // await this.eventsService.create(dto, files);
         // const cats = await this.eventsService.all();
         this.server.emit('events.created', []);
