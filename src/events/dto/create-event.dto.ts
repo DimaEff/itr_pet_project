@@ -1,24 +1,33 @@
-import {IsNumber, IsString, Length} from 'class-validator';
+import {IsNumber, IsString, Length, IsDate} from 'class-validator';
 import * as Buffer from "buffer";
 
 
 export class CreateEventDto {
     @IsString()
-    @Length(1, 30)
+    @Length(1, 32)
     readonly title: string;
 
     @IsString()
-    @Length(1, 350)
+    @Length(1, 512)
     readonly description: string;
 
     @IsString()
     readonly type: string;
 
-    @IsNumber({}, {message: 'test'})
+    @IsNumber()
     lat: number;
 
-    @IsNumber({}, {message: 'test'})
+    @IsNumber()
     lng: number;
 
+    @IsDate()
+    startDate: Date;
+
+    @IsDate()
+    endDate: Date;
+
     files: Buffer[];
+
+    @IsString()
+    creatorId: string;
 }

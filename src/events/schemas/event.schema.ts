@@ -19,7 +19,8 @@ export class Event {
     @Prop({type: [ImageSchema]})
     images: Image[];
 
-    @Prop({subtype: mongoose.Schema.Types.Subdocument, ref: 'EventType'})
+    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'EventType'})
+    // @Prop({subtype: mongoose.Schema.Types.Subdocument, ref: 'EventType'})
     type: EventType;
 
     @Prop()
@@ -27,6 +28,15 @@ export class Event {
 
     @Prop()
     lng: number;
+
+    @Prop()
+    startDate: Date;
+
+    @Prop()
+    endDate: Date;
+
+    @Prop()
+    uid: string;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

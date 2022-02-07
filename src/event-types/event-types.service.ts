@@ -37,7 +37,7 @@ export class EventTypesService {
         return this.eventTypeModel.findOne({value: value.toLowerCase()});
     }
 
-    async delete(id: string): Promise<void> {
-        await this.eventTypeModel.findOneAndDelete({id});
+    async delete(_id: string): Promise<void> {
+        await this.eventTypeModel.findOneAndDelete({_id});
     }
 }

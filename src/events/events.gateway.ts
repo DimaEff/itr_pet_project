@@ -17,9 +17,7 @@ import {CreateEventDto} from './dto/create-event.dto';
 @WebSocketGateway(
     {
         namespace: 'events',
-        cors: {
-            origin: '*',
-        },
+        cors: true,
     }
 )
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -35,13 +33,18 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         this.logger.log('Init');
     }
 
-    async handleConnection(client: Socket, ...args: any[]) {
-        const cats = await this.eventsService.all();
-        client.emit('events.connected', cats);
+    async handleConnection(client: Socket) {
+        this.logger.log(`Client connected: ${client.id}`);
     }
 
     handleDisconnect(client: Socket) {
         this.logger.log(`Client disconnected: ${client.id}`);
+    }
+
+    @SubscribeMessage('events.connect')
+    async handleConnect(client: Socket) {
+        const events = await this.eventsService.all();
+        client.emit('events.connected', events);
     }
 
     @SubscribeMessage('events.create')

@@ -8,18 +8,28 @@ import {StorageService} from "../storage/storage.service";
 import {EventTypesService} from "../event-types/event-types.service";
 import {ErrorMessagesService} from "../error-messages/error-messages.service";
 import {Image} from "../storage/types";
+import {EventType, EventTypeDocument} from "../event-types/schemas/event-type.schema";
 
 
 @Injectable()
 export class EventsService {
     constructor(@InjectModel(Event.name) private eventModel: Model<EventDocument>,
+                @InjectModel(EventType.name) private eventTypeModel: Model<EventTypeDocument>,
                 private storageService: StorageService,
                 private eventTypesService: EventTypesService,
                 private errorsService: ErrorMessagesService) {
     }
 
-    async all(): Promise<Event[]> {
-        return this.eventModel.find();
+    async all(): Promise<any> {
+        const events = await this.eventModel.find();
+        const eventsWithTypes = await Promise.all(events.map(async e => {
+            const type = await this.eventTypeModel.findById(e.type);
+            console.log('searched type', type);
+            e.type = type;
+            return e;
+        }));
+        console.log('with type', eventsWithTypes)
+        return eventsWithTypes;
     }
 
     async create(dto: CreateEventDto): Promise<Event> {

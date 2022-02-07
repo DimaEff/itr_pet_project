@@ -15,6 +15,8 @@ import { ManagementModule } from './management/management.module';
 import { EventTypesModule } from './event-types/event-types.module';
 import { StorageModule } from './storage/storage.module';
 import { EventsModule } from './events/events.module';
+import { EventChatModule } from './event-chat/event-chat.module';
+import { EventChatGateway } from './event-chat/event-chat.gateway';
 
 
 @Module({
@@ -35,6 +37,7 @@ import { EventsModule } from './events/events.module';
         EventTypesModule,
         StorageModule,
         EventsModule,
+        EventChatModule,
     ],
     controllers: [AppController],
     providers: [AppService],

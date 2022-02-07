@@ -6,7 +6,7 @@ import {Image, ImageSchema} from "../../storage/schemas/image.schema";
 
 export type EventTypeDocument = EventType & Document;
 
-@Schema()
+@Schema({})
 export class EventType {
     @Prop()
     title: string;

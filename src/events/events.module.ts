@@ -8,11 +8,12 @@ import {StorageModule} from "../storage/storage.module";
 import {EventTypesModule} from "../event-types/event-types.module";
 import {ErrorMessagesModule} from "../error-messages/error-messages.module";
 import {EventsGateway} from "./events.gateway";
+import {EventType, EventTypeSchema} from "../event-types/schemas/event-type.schema";
 
 
 @Module({
     imports: [
-        MongooseModule.forFeature([{name: Event.name, schema: EventSchema}]),
+        MongooseModule.forFeature([{name: Event.name, schema: EventSchema}, {name: EventType.name, schema: EventTypeSchema}]),
         StorageModule,
         EventTypesModule,
         ErrorMessagesModule,
