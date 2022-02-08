@@ -12,7 +12,7 @@ export class EventChatService {
     }
 
     async getAll(eventId: string): Promise<Message[]> {
-        return this.messageModel.find({eid: eventId}).sort({timestamp: 'desc'});
+        return this.messageModel.find({eid: eventId}).sort({createdAt: -1});
     }
 
     async create(dto: CreateMessageDto): Promise<Message> {

@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 
 export type MessageDocument = Message & Document;
 
-@Schema()
+@Schema({timestamps: true})
 export class Message {
     // event ID
     @Prop()
@@ -15,9 +15,6 @@ export class Message {
 
     @Prop()
     message: string;
-
-    @Prop()
-    timestamp: Date;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import {ConfigService} from "@nestjs/config";
-import {passportJwtSecret} from "jwks-rsa";
 
 
 @Injectable()
@@ -11,4 +9,6 @@ export class HelperService {
 
         return { ...dto, ...normalizedProps };
     }
+
+    getSubscribeMessageCreator = (socketName: string) => (pointName: string): string => `${socketName}.${pointName}`;
 }

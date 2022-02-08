@@ -12,11 +12,15 @@ import {Socket} from "socket.io";
 import {Message} from "./schemas/message.schema";
 import {EventChatService} from "./event-chat.service";
 import {CreateMessageDto} from "./dto/create-message.dto";
+import {getSubscribeMessageCreator} from "../helper/utils";
 
+
+const socketName = 'events-chat';
+const getSubscribeMessage = getSubscribeMessageCreator(socketName);
 
 @WebSocketGateway(
     {
-        namespace: 'event-chat',
+        namespace: socketName,
         cors: true,
     }
 )
@@ -42,22 +46,22 @@ export class EventChatGateway implements OnGatewayInit, OnGatewayConnection, OnG
         this.logger.log(`Client disconnected: ${client.id}`);
     }
 
-    @SubscribeMessage('events-chat.join')
+    @SubscribeMessage(getSubscribeMessage('connect'))
     async handleJoin(client: Socket, eventId) {
+        console.log('join', eventId);
         client.join(eventId);
         this.logger.log(`Client ${client.id} joined to room ${eventId}.`);
 
         const messages: Message[] = await this.eventChatService.getAll(eventId);
 
-        client.emit('events-chat.joined', messages);
+        client.emit(getSubscribeMessage('connected'), messages);
     }
 
-    @SubscribeMessage('events-chat.message')
+    @SubscribeMessage(getSubscribeMessage('message'))
     async handleMessage(client: Socket, dto: CreateMessageDto) {
         await this.eventChatService.create(dto);
         const messages: Message[] = await this.eventChatService.getAll(dto.eid);
-        console.log('events-chat.message', messages);
 
-        this.server.to(dto.eid).emit('events-chat.changed', messages);
+        this.server.to(dto.eid).emit(getSubscribeMessage('changed'), messages);
     }
 }

@@ -22,14 +22,10 @@ export class EventsService {
 
     async all(): Promise<any> {
         const events = await this.eventModel.find();
-        const eventsWithTypes = await Promise.all(events.map(async e => {
-            const type = await this.eventTypeModel.findById(e.type);
-            console.log('searched type', type);
-            e.type = type;
+        return await Promise.all(events.map(async e => {
+            e.type = await this.eventTypeModel.findById(e.type);
             return e;
         }));
-        console.log('with type', eventsWithTypes)
-        return eventsWithTypes;
     }
 
     async create(dto: CreateEventDto): Promise<Event> {
@@ -42,7 +38,7 @@ export class EventsService {
         const images: Image[] = await this.storageService.save(dto.files);
         delete dto.files;
 
-        return this.eventModel.create({...dto, images, type});
+        return this.eventModel.create({...dto, images, type: type._id});
     }
 
     async delete(id: string): Promise<void> {

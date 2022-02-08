@@ -12,11 +12,15 @@ import {AuthGuard} from "@nestjs/passport";
 
 import {EventsService} from './events.service';
 import {CreateEventDto} from './dto/create-event.dto';
+import {getSubscribeMessageCreator} from "../helper/utils";
 
+
+const socketName = 'events';
+const getSubscribeMessage = getSubscribeMessageCreator(socketName);
 
 @WebSocketGateway(
     {
-        namespace: 'events',
+        namespace: socketName,
         cors: true,
     }
 )
@@ -41,29 +45,28 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         this.logger.log(`Client disconnected: ${client.id}`);
     }
 
-    @SubscribeMessage('events.connect')
+    @SubscribeMessage(getSubscribeMessage('connect'))
     async handleConnect(client: Socket) {
         const events = await this.eventsService.all();
-        client.emit('events.connected', events);
+        client.emit(getSubscribeMessage('connected'), events);
     }
 
-    @SubscribeMessage('events.create')
+    @SubscribeMessage(getSubscribeMessage('create'))
     @UseGuards(AuthGuard('jwt-ws'))
     async handleCreate(client: Socket, dto: CreateEventDto) {
         await this.eventsService.create(dto);
         await this.notifyAboutEventsChanges();
     }
 
-    @SubscribeMessage('events.delete')
+    @SubscribeMessage(getSubscribeMessage('delete'))
     @UseGuards(AuthGuard('jwt-ws'))
     async handleDelete(client: Socket, id: string) {
-        // console.log(id);
         await this.eventsService.delete(id);
         await this.notifyAboutEventsChanges();
     }
 
     private async notifyAboutEventsChanges() {
         const events = await this.eventsService.all();
-        this.server.emit('events.changed', events);
+        this.server.emit(getSubscribeMessage('changed'), events);
     }
 }
