@@ -15,12 +15,12 @@ import {CreateMessageDto} from "./dto/create-message.dto";
 import {getSubscribeMessageCreator} from "../helper/utils";
 
 
-const socketName = 'events-chat';
-const getSubscribeMessage = getSubscribeMessageCreator(socketName);
+const SOCKET_NAME = 'events-chat';
+const getSubscribeMessage = getSubscribeMessageCreator(SOCKET_NAME);
 
 @WebSocketGateway(
     {
-        namespace: socketName,
+        namespace: SOCKET_NAME,
         cors: true,
     }
 )

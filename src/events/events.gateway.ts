@@ -13,14 +13,15 @@ import {AuthGuard} from "@nestjs/passport";
 import {EventsService} from './events.service';
 import {CreateEventDto} from './dto/create-event.dto';
 import {getSubscribeMessageCreator} from "../helper/utils";
+import {LikeOrReportDto} from "./dto/like-or-report.dto";
 
 
-const socketName = 'events';
-const getSubscribeMessage = getSubscribeMessageCreator(socketName);
+const SOCKET_NAME = 'events';
+const getSubscribeMessage = getSubscribeMessageCreator(SOCKET_NAME);
 
 @WebSocketGateway(
     {
-        namespace: socketName,
+        namespace: SOCKET_NAME,
         cors: true,
     }
 )
@@ -55,18 +56,49 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     @UseGuards(AuthGuard('jwt-ws'))
     async handleCreate(client: Socket, dto: CreateEventDto) {
         await this.eventsService.create(dto);
-        await this.notifyAboutEventsChanges();
+        await this.notifyAllAboutEventsChanges();
     }
 
     @SubscribeMessage(getSubscribeMessage('delete'))
     @UseGuards(AuthGuard('jwt-ws'))
     async handleDelete(client: Socket, id: string) {
         await this.eventsService.delete(id);
-        await this.notifyAboutEventsChanges();
+        await this.notifyAllAboutEventsChanges();
     }
 
-    private async notifyAboutEventsChanges() {
+    @SubscribeMessage(getSubscribeMessage('like'))
+    @UseGuards(AuthGuard('jwt-ws'))
+    async like(client: Socket, dto: LikeOrReportDto) {
+        await this.eventsService.like(dto);
+        await this.notifyOnlyClientAboutEventsChanges(client);
+    }
+
+    @SubscribeMessage(getSubscribeMessage('unlike'))
+    @UseGuards(AuthGuard('jwt-ws'))
+    async unlike(client: Socket, dto: LikeOrReportDto) {
+        await this.eventsService.unlike(dto);
+        await this.notifyOnlyClientAboutEventsChanges(client);
+    }
+
+    @SubscribeMessage(getSubscribeMessage('report'))
+    @UseGuards(AuthGuard('jwt-ws'))
+    async report(client: Socket, dto: LikeOrReportDto) {
+        const isDelete = await this.eventsService.report(dto);
+
+        if (isDelete) {
+            await this.notifyAllAboutEventsChanges();
+        } else {
+            await this.notifyOnlyClientAboutEventsChanges(client);
+        }
+    }
+
+    private async notifyAllAboutEventsChanges() {
         const events = await this.eventsService.all();
         this.server.emit(getSubscribeMessage('changed'), events);
+    }
+
+    private async notifyOnlyClientAboutEventsChanges(client: Socket) {
+        const events = await this.eventsService.all();
+        client.emit(getSubscribeMessage('changed'), events);
     }
 }

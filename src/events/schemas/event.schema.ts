@@ -37,6 +37,12 @@ export class Event {
 
     @Prop()
     uid: string;
+
+    @Prop()
+    likes: string[];
+
+    @Prop()
+    reports: string[];
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

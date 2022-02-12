@@ -9,6 +9,7 @@ import {EventTypesService} from "../event-types/event-types.service";
 import {ErrorMessagesService} from "../error-messages/error-messages.service";
 import {Image} from "../storage/types";
 import {EventType, EventTypeDocument} from "../event-types/schemas/event-type.schema";
+import {LikeOrReportDto} from "./dto/like-or-report.dto";
 
 
 @Injectable()
@@ -21,7 +22,7 @@ export class EventsService {
     }
 
     async all(): Promise<any> {
-        const events = await this.eventModel.find();
+        const events = await this.eventModel.find({endDate: {$gt: new Date()}});
         return await Promise.all(events.map(async e => {
             e.type = await this.eventTypeModel.findById(e.type);
             return e;
@@ -50,5 +51,28 @@ export class EventsService {
 
         const images = event.images.map(i => i.filename);
         await Promise.all([this.storageService.delete(images), event.delete()]);
+    }
+
+    async like(dto: LikeOrReportDto) {
+        await this.eventModel.findByIdAndUpdate(dto.eid, {$push: {likes: dto.uid}});
+    }
+
+    async unlike(dto: LikeOrReportDto) {
+        await this.eventModel.findByIdAndUpdate(dto.eid, {$pull: {likes: dto.uid}});
+    }
+
+    async report(dto: LikeOrReportDto): Promise<boolean> {
+        let isDelete = false;
+
+        const event = await this.eventModel.findById(dto.eid);
+        if (event.reports.length + 1 >= 2) {
+            await event.remove();
+            isDelete = true;
+        } else {
+            await event.update({$push: {reports: dto.uid}});
+            await event.save();
+        }
+
+        return isDelete;
     }
 }

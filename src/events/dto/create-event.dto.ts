@@ -8,7 +8,7 @@ export class CreateEventDto {
     readonly title: string;
 
     @IsString()
-    @Length(1, 512)
+    @Length(1, 1024)
     readonly description: string;
 
     @IsString()
@@ -29,5 +29,5 @@ export class CreateEventDto {
     files: Buffer[];
 
     @IsString()
-    creatorId: string;
+    uid: string;
 }
