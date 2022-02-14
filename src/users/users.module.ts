@@ -4,6 +4,7 @@ import { HttpModule } from '@nestjs/axios';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { ManagementModule } from '../management/management.module';
+import {StorageModule} from "../storage/storage.module";
 
 
 @Module({
@@ -13,6 +14,7 @@ import { ManagementModule } from '../management/management.module';
             maxRedirects: 5,
         }),
         ManagementModule,
+        StorageModule,
     ],
     controllers: [UsersController],
     providers: [UsersService],

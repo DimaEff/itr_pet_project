@@ -4,7 +4,7 @@ import {resolve} from 'path';
 import {ConfigService} from "@nestjs/config";
 import * as uuid from 'uuid';
 import * as Buffer from "buffer";
-import {fromBuffer} from 'file-type'
+import {fromBuffer} from 'file-type';
 
 import {Image} from "./types";
 
@@ -50,10 +50,14 @@ export class StorageService {
     }
 
     async delete(fileNames: string[]): Promise<void> {
-        await Promise.all(fileNames.map(f => this.bucket
-            .file(f)
-            .delete()
-        ));
+        try {
+            await Promise.all(fileNames.map(f => this.bucket
+                .file(f)
+                .delete()
+            ));
+        } catch (e) {
+            console.log('Some files does not exists in storage', fileNames);
+        }
     }
 
     private getFileMetadata(filename: string): Image {

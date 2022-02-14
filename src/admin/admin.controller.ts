@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Put, Req, SetMetadata, UseGuards } from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Req, SetMetadata, UseGuards} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
@@ -7,6 +7,7 @@ import { PermissionGuard, roles } from '../authorization/guards/permissions';
 import { AdminBlockUserDto } from './dto/admin-block-user.dto';
 import { AdminUpdateUserDto } from './dto/admin-update-user.dto';
 import { RolesService } from '../roles/roles.service';
+import {AdminAssignRolesDto} from "./dto/admin-assign-roles.dto";
 
 
 @Controller('admin')
@@ -30,6 +31,11 @@ export class AdminController {
     @Put('/users/block')
     setIsBlockedUser(@Body() dto: AdminBlockUserDto) {
         return this.usersService.setIsBlockedUser(dto);
+    }
+
+    @Post('/users/roles')
+    assignAdminRole(@Body() dto: AdminAssignRolesDto, @Req() req) {
+        return this.usersService.assignRoles(req, dto);
     }
 
     @Delete('/users/:uid')
